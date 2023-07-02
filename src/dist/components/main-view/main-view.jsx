@@ -1,89 +1,89 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../movie-view/movie-view";
+import { LoginView } from "../login-view/login-view";
+import { SignupView } from "../signup-view/signup-view";
 
-function MainView() {
-	const [movies, setMovies] = useState([]);
+export const MainView = () => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedToken = localStorage.getItem("token");
+  const [user, setUser] = useState(storedUser ? storedUser : null);
+  const [token, setToken] = useState(storedToken ? storedToken : null);
+  const [movies, setMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
-	const [selectedMovie, setSelectedMovie] = useState(null);
+  useEffect(() => {
+    if (!token) return;
 
-	useEffect(() => {
-		const fetchMovieData = async () => {
-			const fetchedData = await fetch('https://myflixmantajbains.herokuapp.com/');
-			const data = await fetchedData.json();
-			const moviesFromAPI = data.map((movie) => {
-				return {
-					id: movie._id,
-					title: movie.Title,
-					image: movie.ImagePath,
-					description: movie.Description,
-					actors: movie.Actors,
-					genre: {
-						name: movie.Genre.Name,
-						description: movie.Genre.Description,
-					},
-					director: {
-						name: movie.Director.Name,
-						bio: movie.Director.Bio,
-					},
-				};
-			});
+    fetch("https://myflixmantajbains.herokuapp.com", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const moviesFromApi = data.map((movie) => {
+          return {
+            _id: movie.id,
+            Title: movie.Title,
+            ImagePath: movie.ImagePath,
+            Description: movie.Description,
+            Genre: {
+              Name: movie.Genre.Name
+            },
+            Director: {
+              Name: movie.Director.Name
+            },
+            Featured: movie.Featured.toString()
+          };
+        });
+        setMovies(moviesFromApi);
+      });
+  }, [token]);
 
-			setMovies(moviesFromAPI);
-		};
+  if (!user) {
+    return (
+      <>
+        <LoginView
+          onLoggedIn={(user, token) => {
+            setUser(user);
+            setToken(token);
+          }}
+        />
+        or
+        <SignupView />
+      </>
+    );
+  }
 
-		fetchMovieData();
-	}, []);
+  return (
+    <div>
+      <button
+        onClick={() => {
+          setUser(null);
+          setToken(null);
+          localStorage.clear();
+        }}
+      >
+        Logout
+      </button>
 
-	// Display selected movie details and similar movie cards
-	function displayMovieView() {
-		let similarMovies = movies.filter((movie) => {
-			return movie.id !== selectedMovie.id && movie.genre.name == selectedMovie.genre.name;
-		});
-
-		return (
-			<>
-				<MovieView
-					movie={selectedMovie}
-					onBackClick={() => {
-						setSelectedMovie(null);
-					}}
-				/>
-				<br />
-				<h2>Similar Movies</h2>
-				{similarMovies.map((movie) => (
-					<MovieCard
-						key={movie.id}
-						movie={movie}
-						onClick={(newSelectedMovie) => {
-							setSelectedMovie(newSelectedMovie);
-						}}
-					/>
-				))}
-			</>
-		);
-	}
-
-	// Display MovieView if there is a selected movie, and display MovieCard list if there is none selected.
-	return (
-		<div>
-			{selectedMovie ? (
-				displayMovieView()
-			) : movies.length ? (
-				movies.map((movie) => (
-					<MovieCard
-						key={movie.id}
-						movie={movie}
-						onClick={(newSelectedMovie) => {
-							setSelectedMovie(newSelectedMovie);
-						}}
-					/>
-				))
-			) : (
-				<div>The Movie list is empty!</div>
-			)}
-		</div>
-	);
-}
-
-export default MainView;
+      {selectedMovie ? (
+        <MovieView
+          movie={selectedMovie}
+          onBackClick={() => setSelectedMovie(null)}
+        />
+      ) : movies.length === 0 ? (
+        <div>The list is empty!</div>
+      ) : (
+        movies.map((movie) => (
+          <MovieCard
+            key={movie._id}
+            movie={movie}
+            onMovieClick={(newSelectedMovie) =>
+              setSelectedMovie(newSelectedMovie)
+            }
+          />
+        ))
+      )}
+    </div>
+  );
+};
