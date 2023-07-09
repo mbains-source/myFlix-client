@@ -4,6 +4,7 @@ import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
+import { ProfileView } from "../profile-view/profile-view";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -22,7 +23,7 @@ export const MainView = () => {
             return;
         }
 
-        fetch("https://myflixmantajbains.herokuapp.com", {
+        fetch("https://movie-api-es93.herokuapp.com/movies", {
             headers: { Authorization: `Bearer ${token}`}
         })
         .then((response) => response.json())
@@ -91,6 +92,24 @@ export const MainView = () => {
                             </Col>
                         )}
                         </>
+                    }
+                    />
+
+                    <Route 
+                    path="/profile"
+                    element={
+                        <>
+                        {!user ? (
+                            <Navigate to="/login" replace />
+                        ) : (
+                            <Col>
+                                <ProfileView 
+                                user={user}
+                                token={token}
+                                setUser={setUser}
+                                />
+                            </Col>
+                        )}</>
                     }
                     />
 
