@@ -21,7 +21,7 @@ export const ProfileView = ({ user, token, setUser }) => {
             BirthDate: birthday
         };
 
-        fetch(`https://movie-api-es93.herokuapp.com/users/${user.Username}`, {
+        fetch(`https://myflixmantajbains.herokuapp.com/users/${user.Username}`, {
             method: "PUT",
             body: JSON.stringify(data),
             headers: {
