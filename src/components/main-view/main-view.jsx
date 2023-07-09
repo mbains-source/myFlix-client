@@ -23,7 +23,7 @@ export const MainView = () => {
             return;
         }
 
-        fetch("https://movie-api-es93.herokuapp.com/movies", {
+        fetch("https://myflixmantajbains.herokuapp.com", {
             headers: { Authorization: `Bearer ${token}`}
         })
         .then((response) => response.json())
