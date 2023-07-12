@@ -1,7 +1,13 @@
-$color: steelblue;
+$primary: #4682B4;
+$body-bg: snow;
 
-.my-flix {
-  color: $color;
+@import "~bootstrap/scss/bootstrap.scss";
+
+.navbar-custom {
+    background-color: #4682B4;
+    width: 100%;
 }
 
-@import "node_modules/bootstrap/scss/bootstrap.scss";
+.navbar-custom .navbar-brand {
+    color: white;
+}
