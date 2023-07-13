@@ -12,7 +12,7 @@ Description
 
 After building the database for the MyFlix application as part of Achievement Two, it was time to construct the client side application
 or FrontEnd. As part of this achievement three, I learned how to use React, an industry standard library, for constructing the client side application
-itself. I was able to learn about concepts like JSX/SCSS and React Bootstrap in order to build the Client-Side Application which I was able to successfully
+for the myFlix app which was a Single PAge Application. I was able to learn about concepts like JSX/SCSS and React Bootstrap in order to build the Client-Side Application which I was able to successfully
 host on Netlify. The website can be visited at the following link https://myflixclientmantajbains.netlify.app/login.
 
 Tools to build app (Programming languages, libraries, etc.)
