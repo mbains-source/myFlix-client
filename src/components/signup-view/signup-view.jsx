@@ -1,144 +1,111 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Modal from "react-bootstrap/Modal";
-import { MovieCard } from "../movie-card/movie-card";
-import { ModalHeader } from "react-bootstrap";
+import { Row, Col, Card, CardGroup } from 'react-bootstrap';
 
-export const ProfileView = ({ user, token, setUser, movies, onLogout }) => {
-    const [username, setUsername] = useState(user.Username);
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState(user.Email);
-    const [birthday, setBirthday] = useState(user.BirthDate);
-    const [showModal, setShowModal] = useState(false);
-    const favoriteMovies = movies.filter((movie) => {
-        return user.FavoriteMovies.includes(movie.id)
-    });
+export const SignupView = () => {
+  const [UserName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [birthday, setBirthday] = useState("");
 
-    const handleShowModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+     // Perform validation checks before submitting the form
+     if (UserName.length < 5) {
+        alert("Username must be at least 5 characters long");
+        return;
+      }
+  
+      if (password.length < 8) {
+        alert("Password must be at least 8 characters long");
+        return;
+      }
+  
+      if (!/\S+@\S+\.\S+/.test(email)) {
+        alert("Invalid email address");
+        return;
+      }
 
-        const data = {
-            Username: username,
-            Password: password,
-            Email: email,
-            BirthDate: birthday
-        };
-
-        fetch(`https://myflixmantajbains.herokuapp.com/users/${user.Username}`, {
-            method: "PUT",
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            }
-        }).then((response) => {
-            if (response.ok) {
-                return response.json()
-            } else {
-                alert("Update failed.")
-            }
-        }).then((data) => {
-            localStorage.setItem("user", JSON.stringify(data));
-            setUser(data);
-        })
+    const data = {
+      UserName: UserName,
+      Password: password,
+      email: email,
+      Birthday: birthday
     };
 
-    const handleDeleteUser = () => {
-        fetch(`https://myflixmantajbains.herokuapp.com/users/${user.Username}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }).then((response) => {
-            if (response.ok) {
-                onLogout();
-            } else {
-                alert("something went wrong.")
-            }
-        })
-    }
+    fetch("https://myflixmantajbains.herokuapp.com/users", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then((response) => {
+      if (response.ok) {
+        alert("Signup successful");
+        window.location.reload();
+      } else {
+        alert("Signup failed");
+      }
+    });
+  };
 
-    return (
-        <>
-        <h1 className="text-white">Profile</h1>
-        <Row>
-            <Col className="text-white">
-                <h3 className="text-white">Your profile details</h3>
-                <div>Username: {user.Username}</div>
-                <div>Email: {user.Email}</div>
-            </Col>
-            <Col>
-            <h3 className="text-white">Update your profile information here.</h3>
-            <Form onSubmit={handleSubmit} className="text-white">
-                <Form.Group controlId="formUsername">
-                    <Form.Label>Username:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        minLength="5" 
-                    />
+  return (
+    <Row>
+      <Col xs={12} lg={10}>
+        <CardGroup>
+          <Card style={{ margin: '20px 0' }}>
+            <Card.Body>
+              <Card.Title>Please SignUp</Card.Title>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="formUserName">
+                  <Form.Label>Username:</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={UserName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    required
+                    minLength="5"
+                  />
                 </Form.Group>
-                <Form.Group controlId="formPassword">
-                    <Form.Label>Password:</Form.Label>
-                    <Form.Control
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        minLength="5"
-                    />
+
+                <Form.Group controlId="formSignupPassword">
+                  <Form.Label>Password:</Form.Label>
+                  <Form.Control
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength="8"
+                  />
                 </Form.Group>
+
                 <Form.Group controlId="formEmail">
-                    <Form.Label>Email:</Form.Label>
-                    <Form.Control
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+                  <Form.Label>Email:</Form.Label>
+                  <Form.Control
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
                 </Form.Group>
+
                 <Form.Group controlId="formBirthday">
-                    <Form.Label>Birthday:</Form.Label>
-                    <Form.Control
-                        type="date"
-                        value={birthday}
-                        onChange={(e) => setBirthday(e.target.value)}
-                        required
-                    />
+                  <Form.Label>Birthday:</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={birthday}
+                    onChange={(e) => setBirthday(e.target.value)}
+                    required
+                  />
                 </Form.Group>
-                <Button variant="primary" type="submit">Save changes</Button>
-            </Form>
-            </Col>
-        </Row>
-        <Row className="text-white">
-            <h3>Favorite movies:</h3>
-            {favoriteMovies.map((movie) => (
-                <Col className="mb-5" key={movie.id} md={4}>
-                    <MovieCard movie={movie}></MovieCard>
-                </Col>
-            ))}
-        </Row>
-        <Button variant="primary" onClick={handleShowModal}>
-            Delete my account
-        </Button>
-        <Modal show={showModal} onHide={handleCloseModal}>
-            <Modal.Header closeButton>
-                <Modal.Title>Delete account</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Are you sure you want to delete your account permanantly?</Modal.Body>
-            <Modal.Footer>
-                <Button variant="primary" onClick={handleDeleteUser}>Yes</Button>
-                <Button variant="secondary" onClick={handleCloseModal}>No</Button>
-            </Modal.Footer>
-        </Modal>
-        </>
-    )
-}
+                <Button type="submit" style={{ margin: '20px 0' }}>Submit</Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </CardGroup>
+      </Col>
+    </Row>
+  );
+};
