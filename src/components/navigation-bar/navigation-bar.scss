@@ -1,26 +1,27 @@
-.nav_bg {
-  text-align: center;
-  width: 50%;
-  background: rgba( 255, 255, 255, 0.25 );
-  box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-  backdrop-filter: blur( 4px );
-  -webkit-backdrop-filter: blur( 4px );
-   border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
-  border: 1px solid rgba( 255, 255, 255, 0.18 );
-}
+.custom-navbar {
+  background-color: DarkSlateGray;
+  font-size: 18px;
+  margin-bottom: 5%;
 
+  .navbar-brand {
+    color: Chartreuse;
+  }
 
-@media (max-width: 950px) {
   .nav-link {
-    font-size: 30px !important;
+    color: Chartreuse;
+
+    &:hover {
+      color: Seashell;
+    }
   }
 
-  Navbar-Brand {
-    font-size: 30px !important;
-  }
+  .btn-outline-secondary {
+    color: Chartreuse;
+    border-color: Seashell;
 
-  .nav_bg {
-      font-size: 30px !important;
+    &:hover {
+      background-color: Chartreuse;
+      color: DimGray;
+    }
   }
 }

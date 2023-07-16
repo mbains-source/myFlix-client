@@ -1,46 +1,55 @@
-import Button from "react-bootstrap";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import { Navbar, Container, Nav } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import "./navigation-bar.scss";
 
 export const NavigationBar = ({ user, onLoggedOut }) => {
-    return (
-        <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
-            <Container>
-                <Navbar.Brand as={Link} to="/" >
-                    MyFlixApp
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navabar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
-                        {!user && (
-                            <>
-                            <Nav.Link as={Link} to="/login">
-                                Login
-                            </Nav.Link>
-                            <Nav.Link as={Link} to="/signup">
-                                Signup
-                            </Nav.Link>
-                            </>
-                        )}
+  const [loggedIn, setLoggedIn] = useState(false);
 
-                        {user && (
-                            <>
-                            <Nav.Link as={Link} to="/">
-                                Home
-                            </Nav.Link>
-                            <Nav.Link onClick={onLoggedOut}>
-                                Logout
-                            </Nav.Link>
-                            <Nav.Link as={Link} to="/profile">
-                                My Profile
-                            </Nav.Link>
-                            </>
-                        )}
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
-    )
-}
+  useEffect(() => {
+    if (user) {
+      setLoggedIn(true);
+    } else {
+      setLoggedIn(false);
+    }
+  }, [user]);
+
+  return (
+    <Navbar className="custom-navbar" expand="lg">
+      <Container>
+        <Navbar.Brand as={Link} to="/">
+          Movies App
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link as={Link} to="/">
+              Home
+            </Nav.Link>
+            {loggedIn && (
+              <Nav.Link as={Link} to={`/users/${user?.UserName}`}>
+                Profile
+              </Nav.Link>
+            )}
+            {!loggedIn && (
+              <>
+                <Nav.Link as={Link} to="/signup">
+                  Sign up
+                </Nav.Link>
+                <Nav.Link as={Link} to="/login">
+                  Log in
+                </Nav.Link>
+              </>
+            )}
+          </Nav>
+          {loggedIn && (
+            <Button variant="outline-secondary" onClick={onLoggedOut}>
+              Log out
+            </Button>
+          )}
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
+};
