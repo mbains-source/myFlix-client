@@ -1,98 +1,71 @@
-import { useState, useEffect } from "react";
-import { FormControl } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Button } from "react-bootstrap";
+import { UserInfo } from "./user-info";
+import { FavoriteMovies } from "./favorite-movies";
+import UpdateUser from "./update-user";
+import "./profile-view.scss";
 
-export const ProfileView = ({ user, token, setUser }) => {
-    const [username, setUsername] = useState(user.Username);
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState(user.Email);
-    const [birthday, setBirthday] = useState(user.BirthDate);
+export const ProfileView = ({user, movies, favoritesMovies, addToFavorites, removeFromFavorites}) => {
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+  const updateUser = (updatedUser) => {
+    fetch(`/users/${user.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: updatedUser.email,
+        name: updatedUser.name,
+        birthday: updatedUser.birthday,
+        UserName: updatedUser.UserName,
+        password: updatedUser.password,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("Network response was not ok.");
+      })
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-        const data = {
-            Username: username,
-            Password: password,
-            Email: email,
-            BirthDate: birthday
-        };
+  const handleUserInfoChange = (updatedUser) => {
+    setUser((prevUser) => ({ ...prevUser, ...updatedUser }));
+  };
 
-        fetch(`https://myflixmantajbains.herokuapp.com/users/${user.Username}`, {
-            method: "PUT",
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            }
-        }).then((response) => {
-            if (response.ok) {
-                return response.json()
-            } else {
-                alert("Update failed.")
-            }
-        }).then((data) => {
-            localStorage.setItem("user", JSON.stringify(data));
-            setUser(data);
-        })
-    };
-
-    return (
-        <>
-        <h1>Profile</h1>
+  return (
+    <>
+      <h1 style={{ color: '#194545' }}>Profile</h1>
+      <Container>
         <Row>
-            <Col>
-                <div>Username: {user.Username}</div>
-                <div>Email: {user.Email}</div>
-            </Col>
+          <Col md={4}>
+            {user && (
+              <>
+                <div className="profile-card">
+                  <UserInfo
+                    user={user}
+                  />
+                </div>
+                <UpdateUser user={user} handleSubmit={updateUser} />
+              </>
+            )}
+          </Col>
+          <Col md={8}>
+            <FavoriteMovies
+              movies={movies}
+              favoritesMovies={favoritesMovies}
+              onAddFavorite={addToFavorites}
+              onRemoveFavorite={removeFromFavorites}
+            />
+          </Col>
         </Row>
-        <Row>
-            <h3>Update your profile information here.</h3>
-            <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="formUsername">
-                    <Form.Label>Username:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        minLength="5" 
-                    />
-                </Form.Group>
-                <Form.Group controlId="formPassword">
-                    <Form.Label>Password:</Form.Label>
-                    <Form.Control
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        minLength="5"
-                    />
-                </Form.Group>
-                <Form.Group controlId="formEmail">
-                    <Form.Label>Email:</Form.Label>
-                    <Form.Control
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </Form.Group>
-                <Form.Group controlId="formBirthday">
-                    <Form.Label>Birthday:</Form.Label>
-                    <Form.Control
-                        type="date"
-                        value={birthday}
-                        onChange={(e) => setBirthday(e.target.value)}
-                        required
-                    />
-                </Form.Group>
-                <Button variant="primary" type="submit">Update my account</Button>
-            </Form>
-        </Row>
-        </>
-    )
-}
+      </Container>
+    </>
+  );
+};
