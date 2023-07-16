@@ -1,14 +1,14 @@
-@import "variables.scss";
+$primary: DarkSlateGray;
+$body-bg: DarkGray;
 
-$color: steelblue;
+.btn-primary {
+  border-color: $primary;
 
-@import "../node_modules/bootstrap/scss/bootstrap";
-
-.my-flix {
-    color: $color;
+  &:hover,
+  &:focus {
+    background-color: darken($primary, 10%);
+    border-color: darken($primary, 10%);
+  }
 }
 
-.bg-main {
-    background-color: #012E40;
-    min-height: 100vh;
-}
+@import "node_modules/bootstrap/scss/bootstrap";
