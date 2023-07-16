@@ -1,59 +1,77 @@
-import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
+import { useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
+import { Card } from "react-bootstrap";
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
 
-export const MovieView = ({ movie, onBackClick }) => {
-  return (
-    <div className='m-1'>
-      <div>
-        <img src={movie.ImagePath} alt={movie.Title} className='w-50' />
-      </div>
-      <div>
-        <strong>Title: </strong>
-        <span>{movie.Title}</span>
-      </div>
-      <div>
-        <strong>Description: </strong>
-        <span>{movie.Description}</span>
-      </div>
-      <div>
-        <strong>Director: </strong>
-        <span>{`${movie.Director.firstName} ${movie.Director.lastName}`}</span>
-      </div>
-      <div>
-        <strong>Year: </strong>
-        <strong>{movie.Year}</strong>
-      </div>
-      <div>
-        <strong>Genre: </strong>
-        {movie.Genres && movie.Genres.length > 0 ? (
-          movie.Genres.map((genre) => (
-            <span key={genre} className='genre'>
-              {genre}
-            </span>
-          ))
-        ) : (
-          <span>No genres available</span>
-        )}
-      </div>
-      <Button variant='secondary' onClick={onBackClick} className='m-1'>
-        Back
-      </Button>
-    </div>
-  );
-};
+export const MovieView = ({ movies, user, setUser, token }) => {
+    const { movieId } = useParams();
+    const [ isFavorite, setIsFavorite ] = useState(false);
 
-MovieView.propTypes = {
-  movie: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    Title: PropTypes.string.isRequired,
-    ImagePath: PropTypes.string.isRequired,
-    Director: PropTypes.shape({
-      firstName: PropTypes.string.isRequired,
-      lastName: PropTypes.string.isRequired,
-    }).isRequired,
-    Description: PropTypes.string.isRequired,
-    Year: PropTypes.number.isRequired,
-    Genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  }).isRequired,
-  onBackClick: PropTypes.func.isRequired,
-};
+    useEffect(() => {
+       const isFavorited = user.FavoriteMovies.includes(movieId)
+       setIsFavorite(isFavorited)
+    }, []);
+
+    const removeFavorite = () => {
+        fetch(`https://myflixmantajbains.herokuapp.com/users/${user.Username}/${movieId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            }
+        }).then((response) => {
+            if (response.ok) {
+                return response.json()
+            }
+        }).then((data) => {
+            setIsFavorite(false);
+            localStorage.setItem("user", JSON.stringify(data));
+            setUser(data);
+        })
+    };
+
+    const addToFavorite = () => {
+        fetch(`https://myflixmantajbains.herokuapp.com/users/${user.Username}/${movieId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            }
+        }).then((response) => {
+            if (response.ok) {
+                return response.json()
+            }
+        }).then((data) => {
+            setIsFavorite(true);
+            localStorage.setItem("user", JSON.stringify(data));
+            setUser(data);
+        })
+    }
+
+    const movie = movies.find((m) => m.id === movieId);
+
+    return (
+        <Card className="mt-1 mb-1 h-100 bg-secondary text-white" >
+            <Card.Img variant="top" src={movie.image}/>
+            <Card.Body>
+                <Card.Title>{movie.title}</Card.Title>
+                <Card.Text>Description: {movie.description}</Card.Text>
+                <Card.Text>Director: {movie.director.name}</Card.Text>
+                <Card.Text>Bio: {movie.director.bio}</Card.Text>
+                <Card.Text>Genre: {movie.genre.name}</Card.Text>
+                <Card.Text>Description: {movie.genre.description}</Card.Text>
+            </Card.Body>
+
+            {isFavorite ? (
+                <Button onClick={removeFavorite}>Remove from favorites</Button>
+            ) : (
+                <Button onClick={addToFavorite}>Add to favorites</Button>
+            )}
+
+            <Link to={"/"}>
+            <Button>Back</Button>
+            </Link>
+        </Card>
+    )
+}

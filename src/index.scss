@@ -1,13 +1,14 @@
-$primary: #4682B4;
-$body-bg: snow;
+@import "variables.scss";
 
-@import "~bootstrap/scss/bootstrap.scss";
+$color: steelblue;
 
-.navbar-custom {
-    background-color: #4682B4;
-    width: 100%;
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+.my-flix {
+    color: $color;
 }
 
-.navbar-custom .navbar-brand {
-    color: white;
+.bg-main {
+    background-color: #012E40;
+    min-height: 100vh;
 }
