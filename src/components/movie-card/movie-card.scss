@@ -5,12 +5,12 @@
 }
 
 .favorite-button.btn.btn-primary {
-  background-color: DarkSlateGray;
-  color: Chartreuse;
+  background-color: steelblue;
+  color: white;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: Chartreuse;
-    color: DarkSlateGray;
+    background-color: steelblue;
+    color: white;
   }
 }
