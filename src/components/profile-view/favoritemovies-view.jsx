@@ -1,7 +1,7 @@
 import React from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import "./favorite-movies.scss";
+import "./favoritemovies-view.scss";
 import { MovieCard } from "../movie-card/movie-card";
 
 export const FavoriteMovies = ({ movies, onAddFavorite, onRemoveFavorite }) => {
