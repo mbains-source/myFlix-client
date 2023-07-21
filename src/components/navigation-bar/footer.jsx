@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import './footer.scss';
 
-const Footer = () => {
+export const Footer = () => {
     return (
         <footer className="mt-auto py-3">
           <div className="container">
