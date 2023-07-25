@@ -13,6 +13,7 @@ export const SignupView = () => {
     event.preventDefault();
 
      // Perform validation checks before submitting the form
+     /*
      if (UserName.length < 5) {
         alert("Username must be at least 5 characters long");
         return;
@@ -27,13 +28,14 @@ export const SignupView = () => {
         alert("Invalid email address");
         return;
       }
-
+*/
     const data = {
       UserName: UserName,
       Password: password,
       email: email,
       Birthday: birthday
     };
+
 
     fetch("https://myflixmantajbains.herokuapp.com/users", {
       method: "POST",
