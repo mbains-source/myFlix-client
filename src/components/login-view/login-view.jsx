@@ -4,19 +4,19 @@ import Form from "react-bootstrap/Form";
 import { Row, Col, Card, CardGroup } from 'react-bootstrap';
 
 export const LoginView = ({ onLoggedIn }) => {
-  const [UserName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [Username, setUsername] = useState("");
+  const [Password, setPassword] = useState("");
   const [formErrors, setFormErrors] = useState({});
 
   const validateForm = () => {
     let errors = {};
 
-    if (!UserName.trim()) {
-      errors.UserName = "Username is required";
+    if (!Username.trim()) {
+      errors.Username = "Username is required";
     }
 
-    if (!password.trim()) {
-      errors.password = "Password is required";
+    if (!Password.trim()) {
+      errors.Password = "Password is required";
     }
 
     setFormErrors(errors);
@@ -31,8 +31,8 @@ export const LoginView = ({ onLoggedIn }) => {
     }
 
     const data = {
-      UserName: UserName,
-      Password: password
+      UserName: Username,
+      Password: Password
     };
 
     fetch("https://myflixmantajbains.herokuapp.com/login", {
@@ -67,26 +67,26 @@ export const LoginView = ({ onLoggedIn }) => {
               <Card.Title>Please Login</Card.Title>
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formUserLogin">
-                  <Form.Label>UserName:</Form.Label>
+                  <Form.Label>Username:</Form.Label>
                   <Form.Control
                     type="text"
-                    value={UserName}
-                    onChange={(e) => setUserName(e.target.value)}
+                    value={Username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                     minLength="5"
                   />
-                  {formErrors.UserName && <div>{formErrors.UserName}</div>}
+                  {formErrors.Username && <div>{formErrors.Username}</div>}
                 </Form.Group>
 
                 <Form.Group controlId="formPassword">
                   <Form.Label>Password:</Form.Label>
                   <Form.Control
-                    type="password"
-                    value={password}
+                    type="Password"
+                    value={Password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  {formErrors.password && <div>{formErrors.password}</div>}
+                  {formErrors.Password && <div>{formErrors.Password}</div>}
                 </Form.Group>
                 <Button variant="primary" type="submit" style={{ margin: '20px 0' }}>
                   Submit
