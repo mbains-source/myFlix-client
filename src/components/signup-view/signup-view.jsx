@@ -75,8 +75,8 @@ export const SignupView = () => {
                 <Form.Group controlId="formSignupPassword">
                   <Form.Label>Password:</Form.Label>
                   <Form.Control
-                    type="password"
-                    value={password}
+                    type="Password"
+                    value={Password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength="8"
