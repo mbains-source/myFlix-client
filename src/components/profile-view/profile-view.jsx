@@ -17,7 +17,7 @@ export const ProfileView = ({user, movies, favoritesMovies, addToFavorites, remo
         email: updatedUser.email,
         name: updatedUser.name,
         birthday: updatedUser.birthday,
-        UserName: updatedUser.UserName,
+        Username: updatedUser.Username,
         password: updatedUser.password,
       }),
     })

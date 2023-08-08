@@ -14,7 +14,7 @@ export const MovieView = ({ movies, user, setUser, token }) => {
     }, []);
 
     const removeFavorite = () => {
-        fetch(`https://myflixmantajbains.herokuapp.com/users/${user.Username}/${movieId}`, {
+        fetch(`https://movieapi-me1u.onrender.com/users/${user.Username}/${movieId}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export const MovieView = ({ movies, user, setUser, token }) => {
     };
 
     const addToFavorite = () => {
-        fetch(`https://myflixmantajbains.herokuapp.com/users/${user.Username}/${movieId}`, {
+        fetch(`https://movieapi-me1u.onrender.com/users/${user.Username}/${movieId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

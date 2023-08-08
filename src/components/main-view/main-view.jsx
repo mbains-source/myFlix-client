@@ -28,7 +28,7 @@ export const MainView = () => {
   // update the filtered movies list when the movies or filter change
   useEffect(() => {
     if (!token) return; // don't fetch movies if the user is not logged in
-    let url = "https://myflixmantajbains.herokuapp.com/movies";
+    let url = "https://movieapi-me1u.onrender.com/movies";
     if (filter !== "") {
       url += `?genre=${filter}`;
     }
@@ -87,7 +87,7 @@ export const MainView = () => {
 
     try {
       await fetch(
-        `https://myflixmantajbains.herokuapp.com/users/${user.UserName}/movies/${movieId}`,
+        `https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -111,7 +111,7 @@ export const MainView = () => {
 
     try {
       await fetch(
-        `https://myflixmantajbains.herokuapp.com/${user.UserName}/movies/${movieId}`,
+        `https://movieapi-me1u.onrender.com/${user.Username}/movies/${movieId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -208,7 +208,7 @@ export const MainView = () => {
             }
           />
           <Route
-            path="/users/:UserName"
+            path="/users/:Username"
             element={
               <ProfileView
                 user={user}

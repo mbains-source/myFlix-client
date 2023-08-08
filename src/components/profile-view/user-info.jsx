@@ -9,7 +9,7 @@ export const UserInfo = ({ user }) => {
         <Card.Title className="profile-title" style={{color: '#194545'}}>User Info</Card.Title>
         <Card.Text className="profile-text">
           <span className="label">Username: </span>
-          <span className="value">{user.UserName}</span>
+          <span className="value">{user.Username}</span>
         </Card.Text>
         <Card.Text className="profile-text">
           <span className="label">Email: </span>

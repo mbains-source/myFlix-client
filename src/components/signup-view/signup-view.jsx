@@ -14,7 +14,7 @@ export const SignupView = () => {
 
      // Perform validation checks before submitting the form
      /*
-     if (UserName.length < 5) {
+     if (Username.length < 5) {
         alert("Username must be at least 5 characters long");
         return;
       }
@@ -37,7 +37,7 @@ export const SignupView = () => {
     };
 
 
-    fetch("https://myflixmantajbains.herokuapp.com/users", {
+    fetch("https://movieapi-me1u.onrender.com/users", {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
