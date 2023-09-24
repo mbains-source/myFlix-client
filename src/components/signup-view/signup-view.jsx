@@ -86,8 +86,8 @@ export const SignupView = () => {
                 <Form.Group controlId="formEmail">
                   <Form.Label>Email:</Form.Label>
                   <Form.Control
-                    type="email"
-                    value={email}
+                    type="Email"
+                    value={Email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
