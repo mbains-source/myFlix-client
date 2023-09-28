@@ -1,77 +1,115 @@
 import { useEffect, useState } from "react";
-import Button from "react-bootstrap/Button";
-import { Card } from "react-bootstrap";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import "./movie-view.scss";
+import Button from "react-bootstrap/Button";
+import { ProfileView } from "../profile-view/profile-view";
 
-export const MovieView = ({ movies, user, setUser, token }) => {
-    const { movieId } = useParams();
-    const [ isFavorite, setIsFavorite ] = useState(false);
+export const MovieView = ({ user, token, movies, setUser }) => {
+  const { movieId } = useParams();
+  const [Favorite, setFavorite] = useState(false);
 
-    useEffect(() => {
-       const isFavorited = user.FavoriteMovies.includes(movieId)
-       setIsFavorite(isFavorited)
-    }, []);
-
-    const removeFavorite = () => {
-        fetch(`https://movieapi-me1u.onrender.com/users/${user.Username}/${movieId}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            }
-        }).then((response) => {
-            if (response.ok) {
-                return response.json()
-            }
-        }).then((data) => {
-            setIsFavorite(false);
-            localStorage.setItem("user", JSON.stringify(data));
-            setUser(data);
-        })
-    };
-
-    const addToFavorite = () => {
-        fetch(`https://movieapi-me1u.onrender.com/users/${user.Username}/${movieId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            }
-        }).then((response) => {
-            if (response.ok) {
-                return response.json()
-            }
-        }).then((data) => {
-            setIsFavorite(true);
-            localStorage.setItem("user", JSON.stringify(data));
-            setUser(data);
-        })
+  useEffect(() => {
+    if (user?.Favorite?.length && movieId) {
+      setFavorite(user.Favorite.includes(movieId));
     }
+    // const isFavorited = user.Favorite.includes(movieId);
+    // setFavorite(isFavorited);
+  }, [user.Favorite, movieId]);
 
-    const movie = movies.find((m) => m.id === movieId);
-
-    return (
-        <Card className="mt-1 mb-1 h-100 bg-secondary text-white" >
-            <Card.Img variant="top" src={movie.image}/>
-            <Card.Body>
-                <Card.Title>{movie.title}</Card.Title>
-                <Card.Text>Description: {movie.description}</Card.Text>
-                <Card.Text>Director: {movie.director.name}</Card.Text>
-                <Card.Text>Bio: {movie.director.bio}</Card.Text>
-                <Card.Text>Genre: {movie.genre.name}</Card.Text>
-                <Card.Text>Description: {movie.genre.description}</Card.Text>
-            </Card.Body>
-
-            {isFavorite ? (
-                <Button onClick={removeFavorite}>Remove from favorites</Button>
-            ) : (
-                <Button onClick={addToFavorite}>Add to favorites</Button>
-            )}
-
-            <Link to={"/"}>
-            <Button>Back</Button>
-            </Link>
-        </Card>
+  const addFavorite = () => {
+    fetch(
+      `https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
-}
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        setFavorite(true);
+        user.Favorite.push(movieId);
+        localStorage.setItem("user", JSON.stringify(data));
+        setUser(user);
+      });
+  };
+
+  const removeFavorite = () => {
+    fetch(
+      `https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        setFavorite(false);
+        user.Favorite = user.Favorite.filter((id) => id !== movieId);
+        localStorage.setItem("user", JSON.stringify(data));
+        setUser(user);
+      });
+  };
+
+  const movie = movies.find((movie) => movie.id === movieId);
+
+  return (
+    <div>
+      <div>
+        <span>
+          <img src={movie.ImagePath} width="30%" />
+        </span>
+      </div>
+
+      <div>
+        <span>Title: </span>
+        <span> {movie.Title} </span>
+      </div>
+
+      <div>
+        <span>Description: </span>
+        <span> {movie.Description} </span>
+      </div>
+
+      <div>
+        <span>Genre: </span>
+        <span> {movie.Genre} </span>
+      </div>
+
+      <div>
+        <span>Director: </span>
+        <span> {movie.Director} </span>
+      </div>
+
+      <div>
+        <span>Featured: </span>
+        <span> {movie.Featured} </span>
+      </div>
+
+      {Favorite ? (
+        <Button onClick={removeFavorite}>Remove from favourite movies</Button>
+      ) : (
+        <Button onClick={addFavorite}>Add to my favorite movies</Button>
+      )}
+
+      <Link to={`/`}>
+        <Button>Back</Button>
+      </Link>
+    </div>
+  );
+};
