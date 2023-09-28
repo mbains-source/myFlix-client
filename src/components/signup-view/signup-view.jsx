@@ -18,7 +18,7 @@ export const SignupView = () => {
       Birthday: birthday,
     };
 
-    fetch("https://movieapi-me1u.onrender.com/users", {
+    fetch("https://myflixmbainssource-ac4a0dd1ecf1.herokuapp.com/users", {
       method: "POST",
       body: JSON.stringify(data),
       headers: {

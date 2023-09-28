@@ -20,7 +20,7 @@ export const MovieView = ({ user, token, movies, setUser }) => {
 
   const addFavorite = () => {
     fetch(
-      `https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`,
+      `https://myflixmbainssource-ac4a0dd1ecf1.herokuapp.com/users/${user.Username}/movies/${movieId}`,
       {
         method: "PUT",
         headers: {
@@ -44,7 +44,7 @@ export const MovieView = ({ user, token, movies, setUser }) => {
 
   const removeFavorite = () => {
     fetch(
-      `https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`,
+      `https://myflixmbainssource-ac4a0dd1ecf1.herokuapp.com/users/${user.Username}/movies/${movieId}`,
       {
         method: "DELETE",
         headers: {

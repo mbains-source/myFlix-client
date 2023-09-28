@@ -33,7 +33,7 @@ export const ProfileView = ({ user, token, setUser, movies, onLogout }) => {
     };
 
     fetch(
-      `https://movieapi-me1u.onrender.com/users/${user.Username}`,
+      `https://myflixmbainssource-ac4a0dd1ecf1.herokuapp.com/users/${user.Username}`,
       {
         method: "PUT",
         body: JSON.stringify(data),
@@ -58,7 +58,7 @@ export const ProfileView = ({ user, token, setUser, movies, onLogout }) => {
 
   const handleDeleteUser = () => {
     fetch(
-      `https://movieapi-me1u.onrender.com/users/${user.Username}`,
+      `https://myflixmbainssource-ac4a0dd1ecf1.herokuapp.com/users/${user.Username}`,
       {
         method: "DELETE",
         headers: {

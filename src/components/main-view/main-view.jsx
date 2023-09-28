@@ -31,7 +31,7 @@ export const MainView = () => {
         };
 
         // Put request to add movie to favorite list
-        fetch(`https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`, {
+        fetch(`https://myflixmbainssource-ac4a0dd1ecf1.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export const MainView = () => {
     const deleteFavorite = (movieId) => {
         console.log("Movie ID :", movieId);
         // Delete request to remove movie from favorite list
-        fetch(`https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`, {
+        fetch(`https://myflixmbainssource-ac4a0dd1ecf1.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
         //     headers: { Authorization: `Bearer ${token}` }
         // })
         //     .then((response) => response.json())
@@ -86,7 +86,7 @@ export const MainView = () => {
             return;
         }
 
-        fetch("https://movieapi-me1u.onrender.com/movies", {
+        fetch("https://myflixmbainssource-ac4a0dd1ecf1.herokuapp.com/movies", {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then((response) => response.json())
