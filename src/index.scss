@@ -1,14 +1,36 @@
-$primary: SteelBlue ;
-$body-bg: White;
+$primary: #4682B4;
+$secondary: #D3D3D3;
 
-.btn-primary {
-  border-color: $primary;
+body {
+  background-color: $primary;
 
-  &:hover,
-  &:focus {
-    background-color: darken($primary, 10%);
-    border-color: darken($primary, 10%);
+  .container {
+    max-width: 100%;
+    padding: 0;
   }
 }
 
-@import "node_modules/bootstrap/scss/bootstrap";
+.card {
+  color: $primary;
+
+  .card-body {
+    background-color: white;
+  }
+}
+
+a.btn-secondary,
+button.btn-primary,
+button.btn-secondary {
+  margin: 10px;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.main-body-container {
+  width: 1320px;
+  margin: 0 auto;
+}
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
