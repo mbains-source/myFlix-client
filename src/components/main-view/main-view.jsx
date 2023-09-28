@@ -1,228 +1,236 @@
-import React, { useState, useEffect } from "react";
-import { MovieCard } from "../movie-card/movie-card";
-import { MovieView } from "../movie-view/movie-view";
-import { LoginView } from "../login-view/login-view";
-import { SignupView } from "../signup-view/signup-view";
-import { NavigationBar } from "../navigation-bar/navigation-bar";
-import { ProfileView } from "../profile-view/profile-view";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Footer } from "../navigation-bar/footer";
+import { useEffect, useState } from 'react';
+import { MovieCard } from '../movie-card/movie-card';
+import { MovieView } from '../movie-view/movie-view';
+import { LoginView } from '../login-view/login-view';
+import { SignupView } from '../signup-view/signup-view';
+import { NavigationBar } from '../navigation-bar/navigation-bar';
+import { ProfileView } from '../profile-view/profile-view';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Form from "react-bootstrap/Form";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 export const MainView = () => {
-  // retrieve user and token from localStorage if they exist
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const storedToken = localStorage.getItem("token");
-  // set the initial state of user and token based on the retrieved values
-  const [user, setUser] = useState(storedUser || null);
-  const [token, setToken] = useState(storedToken || null);
-  const [movies, setMovies] = useState([]);
-  // set the initial state of favMovies based on the user's favorite movies
-  const [favMovies, setFavMovies] = useState(user?.FavoriteMovies || []);
-  const [filter, setFilter] = useState("");
-  const [filteredMovies, setFilteredMovies] = useState([]);
-  const [genre, setGenres] = useState([]);
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedToken = localStorage.getItem("token");
+    const [user, setUser] = useState(storedUser ? storedUser : null);
+    const [token, setToken] = useState(storedToken ? storedToken : null);
+    const [movies, setMovies] = useState([]);
+    const [filter, setFilter] = useState("");
 
-  // update the filtered movies list when the movies or filter change
-  useEffect(() => {
-    if (!token) return; // don't fetch movies if the user is not logged in
-    let url = "https://movieapi-me1u.onrender.com/movies";
-    if (filter !== "") {
-      url += `?genre=${filter}`;
-    }
-    fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((response) => response.json())
-      .then((movies) => {
-        const moviesFromApi = movies.map((movie) => ({
-          id: movie._id,
-          title: movie.Title,
-          image: movie.ImagePath,
-          description: movie.Description,
-          genre: movie.Genre.Name,
-          genreDescription: movie.Genre.Description,
-          director: movie.Director,
-        }));
-        setMovies(moviesFromApi);
-        if (filter !== "") {
-          const filteredMovies = moviesFromApi.filter(
-            (movie) => movie.genre === filter
-          );
-          setFilteredMovies(filteredMovies);
-        } else {
-          setFilteredMovies(moviesFromApi);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [token, filter]);
+    const updateUser = user => {
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
+    };
 
-  // update the favorite movies list when the user changes
-  useEffect(() => {
-    if (!user) {
-      setFavMovies([]);
-      return;
-    }
+    const handleAddToFavorites = (movieId) => {
+        // Updated user with new favorited movie
+        const updatedUser = {
+            ...user,
+            FavoriteMovies: [...user.FavoriteMovies, movieId]
+        };
 
-    setFavMovies(user.FavoriteMovies || []);
-  }, [user]);
-  
-  // handle logout by resetting user, token, and clearing localStorage
-  const handleLogout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.clear(); // This will clear all the items in localStorage
-  };
-
-  const addToFav = async (movieId) => {
-    // Check if the movie is already in the favorites list
-    if (favMovies.includes(movieId)) {
-      alert("This movie is already in your favorites list.");
-      return;
-    }
-
-    try {
-      await fetch(
-        `https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
-      const updatedFavMovies = [...favMovies, movieId];
-      setFavMovies(updatedFavMovies);
-      updateLocalStorageFavorites(updatedFavMovies);
-    } catch (error) {
-      console.error("Error:", error);
-      alert("There was an error adding the movie to favorites list.");
-    }
-  };
-
-  const removeFromFav = async (movieId) => {
-    // Check if the movie is not in the favorites list
-    if (!favMovies.includes(movieId)) {
-      alert("This movie is not in your favorites list.");
-      return;
-    }
-
-    try {
-      await fetch(
-        `https://movieapi-me1u.onrender.com/${user.Username}/movies/${movieId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
-      const updatedFavMovies = favMovies.filter((id) => id !== movieId);
-      setFavMovies(updatedFavMovies);
-      updateLocalStorageFavorites(updatedFavMovies);
-    } catch (error) {
-      console.error("Error:", error);
-      alert("There was an error removing the movie from favorites list.");
-    }
-  };
-
-  const updateLocalStorageFavorites = (updatedFavMovies) => {
-    const userData = JSON.parse(localStorage.getItem("user"));
-    userData.FavoriteMovies = updatedFavMovies;
-    localStorage.setItem("user", JSON.stringify(userData));
-  };
-
-  return (
-    <BrowserRouter>
-      <NavigationBar user={user} onLoggedOut={handleLogout} />
-      <Row className="justify-content-md-center">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              !user ? (
-                <>
-                  <Col md={4} className="mb-1.5">
-                    <LoginView
-                      className="form"
-                      onLoggedIn={(user, token) => {
-                        setUser(user);
-                        setToken(token);
-                      }}
-                    />
-                  </Col>
-                  <Col md={1} className="mb-.25" style={{ margin: '50px 0' }}>
-                    or
-                  </Col>
-                  <Col md={4} className="mb-1.5">
-                    <SignupView className="form" />
-                  </Col>
-                </>
-              ) : (
-                <>
-                  <Col xs={12} className="mb-3">
-                    <label className="form-label" style={{ color: '#194545', fontWeight: 'bold' }}>Select genre:</label>
-                    <select
-                      className="form-select"
-                      value={filter}
-                      onChange={(e) => setFilter(e.target.value)}
-                    >
-                      <option value="">All genres</option>
-                      <option value="Family">Family</option>
-                      <option value="Comedy">Comedy</option>
-                      <option value="Drama">Drama</option>
-                      <option value="Fantasy">Fantasy</option>
-                      <option value="Romance">Romance</option>
-                    </select>
-                  </Col>
-                  {filteredMovies.length === 0 ? (
-                    <Col xs={12}>
-                      <div>The list is empty!</div>
-                    </Col>
-                  ) : (
-                    filteredMovies.map((movie) => (
-                      <Col key={movie.id} xs={12} sm={6} md={4} lg={3} className="mb-5">
-                        <MovieCard
-                          movie={movie}
-                          fav={favMovies.includes(movie.id)}
-                          onAddToFavorites={(movieId) => addToFav(movieId)}
-                          onRemoveFromFavorites={(movieId) => removeFromFav(movieId)}
-                          onfilteredMovies={(movieId) => filteredMovies(movieId)}
-                        />
-                      </Col>
-                    ))
-                  )}
-                </>
-              )
+        // Put request to add movie to favorite list
+        fetch(`https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             }
-          />
-          <Route
-            path="/movies/:movieId"
-            element={
-              <MovieView
-                movies={movies}
-                favoritesMovies={favMovies}
-                addToFavorites={addToFav}
-                removeFromFavorites={removeFromFav}
-              />
+        })
+        .then ((response) => {
+            if (response.ok) {
+                alert("Added Movie to Favorites List!");
+            } else {
+                alert("Error Adding Movie to Favorites List!");
             }
-          />
-          <Route
-            path="/users/:Username"
-            element={
-              <ProfileView
+        });
+    };
+
+    const handleLogout = () => {
+        setUser(null);
+        setToken(null);
+        localStorage.clear();
+    };
+
+    const deleteFavorite = (movieId) => {
+        console.log("Movie ID :", movieId);
+        // Delete request to remove movie from favorite list
+        fetch(`https://movieapi-me1u.onrender.com/users/${user.Username}/movies/${movieId}`, {
+        //     headers: { Authorization: `Bearer ${token}` }
+        // })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //         console.log("Returned data", data);
+        //     })
+        //     .catch((error) => {
+        //         console.log('Error fetching movies:", error');
+        //     });
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        .then ((response) => {
+            if (response.ok) {
+                alert("Removed Movie from Favorites!");
+                window.location.reload();
+            } else {
+                alert("Error Removing Movie from Favorites!");
+            }
+        });
+    };
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+
+        fetch("https://movieapi-me1u.onrender.com/movies", {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then((response) => response.json())
+            .then((movies) => {
+                const moviesFromApi = movies.map((movie) => {
+                    return {
+                    id: movie._id,
+                    title: movie.Title,
+                    description: movie.Description,
+                    genre: {
+                        name: movie.Genre.Name,
+                        description: movie.Genre.Description
+                    },
+                    director: {
+                        name: movie.Director.Name,
+                        bio: movie.Director.Bio,
+                        birthYear: movie.Director.Birth,
+                        deathYear: movie.Director.Death
+                    },
+                    image: movie.ImagePath,
+                    year: movie.ReleaseYear,
+                    rating: movie.RottenTomatoes
+                    };
+                });
+                setMovies(moviesFromApi);
+            })
+            .catch((error) => {
+                console.log('Error fetching movies:", error');
+            });
+    }, [token]);
+
+    return (
+        <BrowserRouter>
+            <NavigationBar
                 user={user}
-                movies={movies}
-                favoritesMovies={favMovies}
-                addToFavorites={addToFav}
-                removeFromFavorites={removeFromFav}
-              />
-            }
-          />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Row>
-      <Footer />
-    </BrowserRouter>
-  ); 
-}
+                onLoggedOut={handleLogout}
+            />
+            <Row className="justify-content-md-center">
+                <Routes>
+                    <Route
+                        path="/signup"
+                        element={
+                            <>
+                                {user ? (
+                                    <Navigate to="/" />
+                                ) : (
+                                    <Col md={5}>
+                                        <SignupView />
+                                    </Col>
+                                )}
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/login"
+                        element={
+                            <>
+                                {user ? (
+                                    <Navigate to="/" />
+                                ) : (
+                                    <Col md={5}>
+                                        <LoginView
+                                            onLoggedIn={(user, token) => {
+                                                setUser(user);
+                                                setToken(token);
+                                            }}
+                                        />
+                                    </Col>
+                                )}
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/movies/:movieId"
+                        element={
+                            <>
+                                {!user ? (
+                                    <Navigate to="/login" replace />
+                                ) : (
+                                    <Col md={8}>
+                                        <MovieView movies={movies} onAddToFavorites={handleAddToFavorites} />
+                                    </Col>
+                                )}
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/"
+                        element={
+                            <>
+                                {!user ? (
+                                    <Navigate to="/login" replace />
+                                ) : (
+                                    <>
+                                        <Row className="mt-1 mb-1">
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Search..."
+                                                value={filter}
+                                                onChange={(e) => setFilter(e.target.value)}
+                                            />
+                                        </Row>
+                                        {movies.length === 0 ? (
+                                            <Col>The list is empty!</Col>
+                                        ) : (
+                                            movies
+                                                .filter((movie) => movie.title
+                                                    .toLowerCase()
+                                                    .includes(filter.toLowerCase())
+                                                )
+                                                .map((movie) => (
+                                                    <Col className="mb-4" key={movie.id} md={3}>
+                                                        <MovieCard movie={movie} />
+                                                    </Col>
+                                                ))
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/profile"
+                        element={
+                            <>
+                                {!user ? (
+                                    <Navigate to="/login" replace />
+                                ) : (
+                                    <Col md={8}>
+                                        <ProfileView
+                                            user={user}
+                                            token={token}
+                                            movies={movies}
+                                            onLoggedOut={handleLogout}
+                                            updateUser={updateUser}
+                                            onRemoveFavorite={deleteFavorite}
+                                        />
+                                    </Col>
+                                )}
+                            </>
+                        }
+                    />
+                </Routes>
+            </Row>
+        </BrowserRouter>
+    );
+};
